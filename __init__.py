@@ -1,3 +1,185 @@
+import configobj
+import gzip
+import os
+import sys
+from struct import unpack
+
+class _StarDictIfo():
+    """
+    The .ifo file has the following format:
+    
+    StarDict's dict ifo file
+    version=2.4.2
+    [options]
+    
+    Note that the current "version" string must be "2.4.2" or "3.0.0".  If it's not,
+    then StarDict will refuse to read the file.
+    If version is "3.0.0", StarDict will parse the "idxoffsetbits" option.
+    
+    [options]
+    ---------
+    In the example above, [options] expands to any of the following lines
+    specifying information about the dictionary.  Each option is a keyword
+    followed by an equal sign, then the value of that option, then a
+    newline.  The options may be appear in any order.
+    
+    Note that the dictionary must have at least a bookname, a wordcount and a 
+    idxfilesize, or the load will fail.  All other information is optional.  All 
+    strings should be encoded in UTF-8.
+    
+    Available options:
+    
+    bookname=      // required
+    wordcount=     // required
+    synwordcount=  // required if ".syn" file exists.
+    idxfilesize=   // required
+    idxoffsetbits= // New in 3.0.0
+    author=
+    email=
+    website=
+    description=    // You can use <br> for new line.
+    date=
+    sametypesequence= // very important.
+    
+    TODO: handle first line correctly
+    TODO: handle version
+    """
+    def __init__(self, dict_prefix, container):
+        
+        ifo_filename = '%s.ifo' % dict_prefix
+        
+        try:
+            self._file = open(ifo_filename)
+        except IOError:
+            raise Exception('.ifo file does not exists')
+        
+        _configobj = configobj.ConfigObj(self._file)
+        
+        self.bookname = _configobj.get('bookname')
+        if self.bookname is None: raise Exception('ifo has no bookname')
+        
+        self.wordcount = _configobj.get('wordcount')
+        if self.wordcount is None: raise Exception('ifo has no wordcount')
+        self.wordcount = int(self.wordcount)
+        
+        try:
+            _syn = open('%s.syn' % dict_prefix)
+            self.synwordcount = _configobj.get('synwordcount')
+            if self.synwordcount is None:
+                raise Exception('ifo has no synwordcount but .syn file exists')
+            self.synwordcount = int(self.synwordcount)
+        except IOError:
+            pass
+        
+        self.idxfilesize = _configobj.get('idxfilesize')
+        if self.idxfilesize is None: raise Exception('ifo has no idxfilesize')
+        self.idxfilesize = int(self.idxfilesize)
+        
+        #TODO: implement 64-bits idxoffsetbits 
+        self.idxoffsetbits = _configobj.get('idxoffsetbits', 32)
+        if self.idxoffsetbits is not None:
+            self.idxoffsetbits = int(self.idxoffsetbits)
+        
+        self.author = _configobj.get('author')
+        
+        self.email = _configobj.get('email')
+        
+        self.website = _configobj.get('website')
+        
+        self.description = _configobj.get('description')
+        
+        self.date = _configobj.get('date')
+        
+        self.sametypesequence = _configobj.get('sametypesequence')
+
+class _StarDictIdx():
+    """
+    The .idx file is just a word list.
+    
+    The word list is a sorted list of word entries.
+    
+    Each entry in the word list contains three fields, one after the other:
+         word_str;  // a utf-8 string terminated by '\0'.
+         word_data_offset;  // word data's offset in .dict file
+         word_data_size;  // word data's total size in .dict file 
+    
+    TODO: implement .idx special methods
+    """
+    
+    def __init__(self, dict_prefix, container):
+        
+        idx_filename = '%s.idx' % dict_prefix
+        idx_filename_gz = '%s.gz' % idx_filename
+        
+        try:
+            self._file = open(idx_filename, 'rb')
+            if os.stat(idx_filename)[6] != container.ifo.idxfilesize:
+                raise Exception('size of the .idx file is incorrect')
+        except IOError:
+            try:
+                self._file = gzip.open(idx_filename_gz, 'rb')
+                #TODO: preload file to memory to check its size 
+            except IOError:
+                raise Exception('.idx file does not exists')
+        
+        entries = []
+        fields = ['word_str', 'word_data_offset', 'word_data_size',]
+        cur_field = 0
+        word_str = str()
+        word_data_offset = int()
+        word_data_size = int()
+        entry = []
+        for byte in self._file.read():
+            # looping for word_str
+            if byte == '\x00':
+                entry.append(word_str)
+                print word_str
+                word_str = ''
+            else:
+                #TODO: handle encoding
+                word_str += str(byte)
+                continue
+            # reading word_data_offset
+            word_data_offset_bytes = self._file.read(int(container.ifo.idxoffsetbits / 8))
+            word_data_offset = unpack('>L', word_data_offset_bytes)
+            entry.append(word_data_offset)
+            # reading word_data_size
+            word_data_size_bytes = read(4)
+            word_data_size = unpack('>L', word_data_size_bytes)
+            entry.append(word_data_size)
+            entries.append(entry)
+            entry = []
+
+
+class _StarDictDict():
+    #TODO: implement .dict special methods
+    
+    def __init__(self, dict_prefix, container):
+        
+        dict_filename = '%s.dict' % dict_prefix
+        dict_filename_dz = '%s.dz' % dict_filename
+        
+        try:
+            self._file = open(dict_filename)
+        except IOError:
+            try:
+                self._file = gzip.open(dict_filename_dz)
+            except IOError:
+                raise Exception('.dict file does not exists')
+
+class _StarDictSyn():
+    #TODO: implement .syn special methods
+    
+    def __init__(self, dict_prefix, container):
+        
+        syn_filename = '%s.syn' % dict_prefix
+       
+        try:
+            self._file = open(syn_filename)
+        except IOError:
+            # syn file is optional, passing silently
+            pass
+
 class StarDictDict(dict):
     """
     Dictionary-like class for lazy manipulating stardict dictionaries
@@ -23,28 +205,26 @@ class StarDictDict(dict):
         initializes new StarDictDict instance from stardict dictionary files
         provided by filename_prefix
         
-        TODO: implement me
+        TODO: option to init from path to folder not from prefix
         """
         
-        #somedict.ifo
-        self.ifo = ''
+        # reading somedict.ifo
+        self.ifo = _StarDictIfo(dict_prefix=filename_prefix, container=self)
         
-        #somedict.idx or somedict.idx.gz
-        self.idx = ''
+        # reading somedict.idx or somedict.idx.gz
+        self.idx = _StarDictIdx(dict_prefix=filename_prefix, container=self)
         
-        #somedict.dict or somedict.dict.dz
-        self.dict = ''
+        # reading somedict.dict or somedict.dict.dz
+        self.dict = _StarDictDict(dict_prefix=filename_prefix, container=self)
         
-        #somedict.syn (optional)
-        self.syn = ''
+        # reading somedict.syn (optional)
+        self.syn = _StarDictSyn(dict_prefix=filename_prefix, container=self)
     
     def __cmp__(self, y):
         """
-        returns cmp(md5(self.idx), md5(y.idx))
-        
-        TODO: implement me
+        raises NotImplemented exception
         """
-        pass
+        raise NotImplementedError()
     
     def __contains__(self, k):
         """
