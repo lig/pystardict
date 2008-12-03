@@ -133,15 +133,16 @@ class _StarDictIdx():
             # looping for word_str
             if byte == '\x00':
                 entry.append(word_str)
-                print word_str
                 word_str = ''
             else:
                 #TODO: handle encoding
-                word_str += str(byte)
+                word_str += unpack('s', byte)[0]
                 continue
             # reading word_data_offset
-            word_data_offset_bytes = self._file.read(int(container.ifo.idxoffsetbits / 8))
-            word_data_offset = unpack('>L', word_data_offset_bytes)
+            word_data_offset_bytes = self._file.read(
+                int(container.ifo.idxoffsetbits / 8))
+            print len(word_data_offset_bytes)
+            word_data_offset = unpack('!L', word_data_offset_bytes)
             entry.append(word_data_offset)
             # reading word_data_size
             word_data_size_bytes = read(4)
