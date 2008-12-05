@@ -74,7 +74,6 @@ class _StarDictIfo():
         if self.idxfilesize is None: raise Exception('ifo has no idxfilesize')
         self.idxfilesize = int(self.idxfilesize)
         
-        #TODO: implement 64-bits idxoffsetbits 
         self.idxoffsetbits = _configobj.get('idxoffsetbits', 32)
         if self.idxoffsetbits is not None:
             self.idxoffsetbits = int(self.idxoffsetbits)
@@ -125,7 +124,7 @@ class _StarDictIdx():
         
         self._ifile = iter(self._file)
         #TODO: make class for idx entry 
-        self.entries = {}
+        self._idx = {}
         entry = []
         word_str = ''
         for byte in self._ifile:
@@ -153,9 +152,14 @@ class _StarDictIdx():
             entry.append(word_data_size)
             
             # saving line
-            self.entries[entry[0]] = tuple(entry[1:])
+            self._idx[entry[0]] = tuple(entry[1:])
             entry = []
-
+    
+    def __getitem__(self, word):
+        """
+        returns tuple (word_data_offset, word_data_size,) for word in .dict
+        """
+        return self._idx[word]
 
 class _StarDictDict():
     #TODO: implement .dict special methods
@@ -186,7 +190,7 @@ class _StarDictSyn():
             # syn file is optional, passing silently
             pass
 
-class StarDictDict(dict):
+class Dictionary(dict):
     """
     Dictionary-like class for lazy manipulating stardict dictionaries
     
