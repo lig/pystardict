@@ -1,6 +1,5 @@
 import configobj
 import gzip
-import os
 import sys
 from struct import unpack
 
@@ -112,24 +111,25 @@ class _StarDictIdx():
         idx_filename_gz = '%s.gz' % idx_filename
         
         try:
-            self._file = open(idx_filename, 'rb')
-            if os.stat(idx_filename)[6] != container.ifo.idxfilesize:
-                raise Exception('size of the .idx file is incorrect')
+            file = open(idx_filename, 'rb')
         except IOError:
             try:
-                self._file = gzip.open(idx_filename_gz, 'rb')
-                #TODO: preload file to memory to check its size 
+                file = gzip.open(idx_filename_gz, 'rb')
             except IOError:
                 raise Exception('.idx file does not exists')
         
-        entries = []
-        fields = ['word_str', 'word_data_offset', 'word_data_size',]
-        cur_field = 0
-        word_str = str()
-        word_data_offset = int()
-        word_data_size = int()
+        # check file size
+        self._file = file.read()
+        if file.tell() != container.ifo.idxfilesize:
+            raise Exception('size of the .idx file is incorrect')
+        
+        self._ifile = iter(self._file)
+        #TODO: make class for idx entry 
+        self.entries = {}
         entry = []
-        for byte in self._file.read():
+        word_str = ''
+        for byte in self._ifile:
+            
             # looping for word_str
             if byte == '\x00':
                 entry.append(word_str)
@@ -138,17 +138,22 @@ class _StarDictIdx():
                 #TODO: handle encoding
                 word_str += unpack('s', byte)[0]
                 continue
+            
             # reading word_data_offset
-            word_data_offset_bytes = self._file.read(
-                int(container.ifo.idxoffsetbits / 8))
-            print len(word_data_offset_bytes)
-            word_data_offset = unpack('!L', word_data_offset_bytes)
+            word_data_offset_bytes = ''.join(
+                [self._ifile.next() for i in range(
+                    int(container.ifo.idxoffsetbits / 8))])
+            word_data_offset = unpack('!L', word_data_offset_bytes)[0]
             entry.append(word_data_offset)
+            
             # reading word_data_size
-            word_data_size_bytes = read(4)
-            word_data_size = unpack('>L', word_data_size_bytes)
+            word_data_size_bytes = ''.join(
+                [self._ifile.next() for i in range(4)])
+            word_data_size = unpack('!L', word_data_size_bytes)[0]
             entry.append(word_data_size)
-            entries.append(entry)
+            
+            # saving line
+            self.entries[entry[0]] = tuple(entry[1:])
             entry = []
 
 
