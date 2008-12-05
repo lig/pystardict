@@ -100,8 +100,6 @@ class _StarDictIdx():
          word_str;  // a utf-8 string terminated by '\0'.
          word_data_offset;  // word data's offset in .dict file
          word_data_size;  // word data's total size in .dict file 
-    
-    TODO: implement .idx special methods
     """
     
     def __init__(self, dict_prefix, container):
@@ -127,15 +125,17 @@ class _StarDictIdx():
         self._idx = {}
         entry = []
         word_str = ''
+        c = 0
         for byte in self._ifile:
             
             # looping for word_str
             if byte == '\x00':
-                entry.append(word_str)
+                entry.append(''.join(unpack('%sc' % c, word_str)))
                 word_str = ''
+                c = 0
             else:
-                #TODO: handle encoding
-                word_str += unpack('s', byte)[0]
+                word_str += byte
+                c += 1
                 continue
             
             # reading word_data_offset
