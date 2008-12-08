@@ -40,56 +40,65 @@ class _StarDictIfo():
     description=    // You can use <br> for new line.
     date=
     sametypesequence= // very important.
-    
-    TODO: handle first line correctly
-    TODO: handle version
     """
     def __init__(self, dict_prefix, container):
         
         ifo_filename = '%s.ifo' % dict_prefix
         
         try:
-            self._file = open(ifo_filename)
+            _file = open(ifo_filename)
         except IOError:
             raise Exception('.ifo file does not exists')
         
-        _configobj = configobj.ConfigObj(self._file)
+        # verbosely skipping ifo header
+        print _file.readline()
         
-        self.bookname = _configobj.get('bookname')
+        _line = _file.readline().split('=')
+        if _line[0] == 'version':
+            self.version = _line[1]
+        else:
+            raise Exception('ifo has invalid format')
+        
+        _config = {}
+        for _line in _file:
+            _line_splited = _line.split('=')
+            _config[_line_splited[0]] = _line_splited[1]
+        
+        self.bookname = _config.get('bookname', None)
         if self.bookname is None: raise Exception('ifo has no bookname')
         
-        self.wordcount = _configobj.get('wordcount')
+        self.wordcount = _config.get('wordcount', None)
         if self.wordcount is None: raise Exception('ifo has no wordcount')
         self.wordcount = int(self.wordcount)
         
-        try:
-            _syn = open('%s.syn' % dict_prefix)
-            self.synwordcount = _configobj.get('synwordcount')
-            if self.synwordcount is None:
-                raise Exception('ifo has no synwordcount but .syn file exists')
-            self.synwordcount = int(self.synwordcount)
-        except IOError:
-            pass
+        if self.version == '3.0.0':
+            try:
+                _syn = open('%s.syn' % dict_prefix)
+                self.synwordcount = _config.get('synwordcount', None)
+                if self.synwordcount is None:
+                    raise Exception('ifo has no synwordcount but .syn file exists')
+                self.synwordcount = int(self.synwordcount)
+            except IOError:
+                pass
         
-        self.idxfilesize = _configobj.get('idxfilesize')
+        self.idxfilesize = _config.get('idxfilesize', None)
         if self.idxfilesize is None: raise Exception('ifo has no idxfilesize')
         self.idxfilesize = int(self.idxfilesize)
         
-        self.idxoffsetbits = _configobj.get('idxoffsetbits', 32)
-        if self.idxoffsetbits is not None:
-            self.idxoffsetbits = int(self.idxoffsetbits)
+        self.idxoffsetbits = _config.get('idxoffsetbits', 32)
+        self.idxoffsetbits = int(self.idxoffsetbits)
         
-        self.author = _configobj.get('author')
+        self.author = _config.get('author', '')
         
-        self.email = _configobj.get('email')
+        self.email = _config.get('email', '')
         
-        self.website = _configobj.get('website')
+        self.website = _config.get('website', '')
         
-        self.description = _configobj.get('description')
+        self.description = _config.get('description', '')
         
-        self.date = _configobj.get('date')
+        self.date = _config.get('date', '')
         
-        self.sametypesequence = _configobj.get('sametypesequence')
+        self.sametypesequence = _config.get('sametypesequence', '')
 
 class _StarDictIdx():
     """
