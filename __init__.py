@@ -425,9 +425,9 @@ class Dictionary(dict):
         """
         returns translation for word k from cache or not and then caches
         """
-        try:
+        if self._dict_cache.has_key(k):
             return self._dict_cache[k]
-        except KeyError:
+        else:
             value = self.dict[k]
             self._dict_cache[k] = value
             return value
