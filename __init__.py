@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import configobj
 import gzip
 import sys
 from struct import unpack
