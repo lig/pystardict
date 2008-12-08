@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import gzip
-import sys
 from struct import unpack
 
 class _StarDictIfo():
