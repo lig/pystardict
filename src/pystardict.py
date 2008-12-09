@@ -166,6 +166,8 @@ class _StarDictIdx():
     def __getitem__(self, word):
         """
         returns tuple (word_data_offset, word_data_size,) for word in .dict
+        
+        @note: here may be placed flexible search realization
         """
         return self._idx[word]
 

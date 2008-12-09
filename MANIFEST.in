@@ -1,0 +1,2 @@
+graft examples
+recursive-exclude examples *.pyc

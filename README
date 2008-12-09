@@ -1,0 +1,9 @@
+PyStarDict README
+=================
+
+Install
+-------
+
+just run:
+
+`python setup.py install`
