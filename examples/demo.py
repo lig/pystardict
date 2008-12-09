@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from __init__ import Dictionary
+from pystardict import Dictionary
 
 if __name__ == '__main__':
     
@@ -14,25 +14,25 @@ if __name__ == '__main__':
     print '2 dicts load:', milestone2-milestone1
     
     print dict1.idx['test']
-    print dict2.idx['аббат']
+    print dict2.idx['проверка']
     
     milestone3 = datetime.datetime.today()
     print '2 cords getters:', milestone3-milestone2
     
     print dict1.dict['test']
-    print dict2.dict['аббат']
+    print dict2.dict['проверка']
     
     milestone4 = datetime.datetime.today()
     print '2 direct data getters (w\'out cache):', milestone4-milestone3
     
     print dict1['test']
-    print dict2['аббат']
+    print dict2['проверка']
 
     milestone5 = datetime.datetime.today()
     print '2 high level data getters (not cached):', milestone5-milestone4
     
     print dict1['test']
-    print dict2['аббат']
+    print dict2['проверка']
     
     milestone6 = datetime.datetime.today()
     print '2 high level data getters (cached):', milestone6-milestone5
