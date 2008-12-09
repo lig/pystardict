@@ -1,2 +1,2 @@
 graft examples
-recursive-exclude examples *.pyc
+global-exclude *.pyc

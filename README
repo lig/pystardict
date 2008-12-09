@@ -1,9 +1,69 @@
+Copyright 2008 Serge Matveenko
+
+This file is part of PyStarDict.
+
+PyStarDict is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+PyStarDict is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
+
 PyStarDict README
 =================
 
-Install
+Home page
+---------
+
+http://
+
+Authors
 -------
 
-just run:
+Serge Matveenko <s@matveenko.ru>
 
-`python setup.py install`
+Installation
+------------
+
+_This is short installation instructions for PyStarDict._
+
+1. Install Python
+
+  http://python.org/
+
+2. Download latest version of PyStarDict
+
+  http://
+
+3. Extract files from the archive
+
+  `tar xvf PyStarDict-version.tar.gz`
+
+4. Change working directory to the new one
+
+  `cd PyStarDict-version`
+
+6. Install PyStarDict
+
+  `python setup.py install --prefix=/local/prefix`
+
+  _**Note**: `--prefix` is optional_
+
+You are done!
+
+How to contribute
+-----------------
+
+* Please report any bugs here:
+
+  http://
+
+* Or send you patches by email:
+
+  git@
