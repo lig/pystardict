@@ -1,2 +1,6 @@
-graft examples
 global-exclude *.pyc
+
+graft examples
+graft tests
+
+include test.py
