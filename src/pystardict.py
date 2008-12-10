@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Copyright 2008 Serge Matveenko
 
@@ -17,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-# -*- coding: utf-8 -*-
 import gzip
 from struct import unpack
 
@@ -67,8 +67,8 @@ class _StarDictIfo():
         except IOError:
             raise Exception('.ifo file does not exists')
         
-        # verbosely skipping ifo header
-        print _file.readline()
+        # skipping ifo header
+        _file.readline()
         
         _line = _file.readline().split('=')
         if _line[0] == 'version':
