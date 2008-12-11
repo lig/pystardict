@@ -67,10 +67,22 @@ Examples are installed in the `/local/prefix/share/pystardict` directory, where
 How to contribute
 -----------------
 
-* Please report any bugs here:
+* Fill free to report any bugs or attach patches here:
 
   [File bug on the SorceForge BugTracker]
 
 * Or send you patches by email:
 
   <git@matveenko.ru>
+
+Style Guide for PyStarDict Code
+-------------------------------
+
+* Respect PEP 8 -- Style Guide for Python Code
+
+* Use Markdown for stand alone documentation files, render them to HTML and
+keep both files
+
+* Use `@` symbol for `todo`s and other pydoc tags
+
+* Use `@author` tag if you have modified some file

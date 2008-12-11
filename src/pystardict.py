@@ -17,6 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 
+@author: Serge Matveenko <s@matveenko.ru>
 """
 import gzip
 from struct import unpack
@@ -148,7 +149,7 @@ class _StarDictIdx():
             raise Exception('size of the .idx file is incorrect')
         
         self._ifile = iter(self._file)
-        #TODO: make class for idx entry 
+        #@todo: make class for idx entry 
         self._idx = {}
         entry = []
         word_str = ''
@@ -355,12 +356,12 @@ class _StarDictDict():
         # reading data
         bytes = self._file.read(cords[1])
         
-        #TODO: handle multifield data
-        #TODO: handle encoding. it seems to be working as is but i'm not sure 
+        #@todo: handle multifield data
+        #@todo: handle encoding. it seems to be working as is but i'm not sure 
         return bytes
 
 class _StarDictSyn():
-    #TODO: implement .syn special methods
+    #@todo: implement .syn special methods
     
     def __init__(self, dict_prefix, container):
         
@@ -397,7 +398,7 @@ class Dictionary(dict):
         initializes new StarDictDict instance from stardict dictionary files
         provided by filename_prefix
         
-        TODO: option to init from path to folder not from prefix
+        @todo: option to init from path to folder not from prefix
         """
         
         # reading somedict.ifo
@@ -425,7 +426,7 @@ class Dictionary(dict):
         """
         returns True if x.idx has a word k, else False
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -433,7 +434,7 @@ class Dictionary(dict):
         """
         frees cache from word k translation
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -453,7 +454,7 @@ class Dictionary(dict):
         """
         returns translation for word k from cache or not and then caches
         """
-        if self._dict_cache.has_key(k):
+        if k in self._dict_cache:
             return self._dict_cache[k]
         else:
             value = self.dict[k]
@@ -482,7 +483,7 @@ class Dictionary(dict):
         """
         returns number of words provided by wordcount parameter of the x.ifo
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -496,7 +497,7 @@ class Dictionary(dict):
         """
         returns True if md5(x.idx) is not equal to md5(y.idx), else False
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -504,7 +505,7 @@ class Dictionary(dict):
         """
         returns classname and bookname parameter of the x.ifo
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -512,7 +513,7 @@ class Dictionary(dict):
         """
         sets translation of the word k to v
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -521,7 +522,7 @@ class Dictionary(dict):
         unlike dict class resets dictionary to the original state, i.e. clears
         all of the blacklisting info or reverts changed values 
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -531,7 +532,7 @@ class Dictionary(dict):
         
         d defaults to empty string
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -539,7 +540,7 @@ class Dictionary(dict):
         """
         returns True if self.idx has a word k, else False
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     
@@ -579,7 +580,7 @@ class Dictionary(dict):
         specified word. If word is not in self.idx, d is returned if given,
         otherwise KeyError is raised
         
-        TODO: implement me
+        @todo: implement me
         """
         pass
     

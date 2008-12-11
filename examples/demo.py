@@ -17,8 +17,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 
+@author: Serge Matveenko <s@matveenko.ru>
 """
 import datetime
+import os
 
 from pystardict import Dictionary
 
@@ -26,8 +28,11 @@ if __name__ == '__main__':
     
     milestone1 = datetime.datetime.today()
     
-    dict1 = Dictionary('stardict-quick_eng-rus-2.4.2/quick_english-russian')
-    dict2 = Dictionary('stardict-quick_rus-eng-2.4.2/quick_russian-english')
+    dicts_dir = os.path.join(os.path.dirname(__file__))
+    dict1 = Dictionary(os.path.join(dicts_dir, 'stardict-quick_eng-rus-2.4.2',
+        'quick_english-russian'))
+    dict2 = Dictionary(os.path.join(dicts_dir, 'stardict-quick_rus-eng-2.4.2',
+        'quick_russian-english'))
     
     milestone2 = datetime.datetime.today()
     print '2 dicts load:', milestone2-milestone1
