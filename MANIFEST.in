@@ -4,3 +4,5 @@ graft examples
 graft tests
 
 include test.py
+
+include README* MILESTONES*
