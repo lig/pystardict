@@ -21,7 +21,7 @@ PyStarDict README
 Home page
 ---------
 
-http://
+<https://sourceforge.net/projects/pystardict/>
 
 Authors
 -------
@@ -35,11 +35,11 @@ _This is short installation instructions for PyStarDict._
 
 1. Install Python
 
-  http://python.org/
+  <http://python.org/>
 
 2. Download latest version of PyStarDict
 
-  http://
+  [SourceForge Download Page]
 
 3. Extract files from the archive
 
@@ -57,13 +57,20 @@ _This is short installation instructions for PyStarDict._
 
 You are done!
 
+How to use
+----------
+
+For working example look into `examples` directory at the `demo.py` file.
+Examples are installed in the `/local/prefix/share/pystardict` directory, where
+`/local/prefix` is your installation prefix.
+
 How to contribute
 -----------------
 
 * Please report any bugs here:
 
-  http://
+  [File bug on the SorceForge BugTracker]
 
 * Or send you patches by email:
 
-  git@
+  <git@matveenko.ru>
