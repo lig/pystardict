@@ -4,6 +4,7 @@ PyStarDict Project Milestones
 version 0.4
 -----------
 
+* .idx file loading time optimization
 * No "todo"s in the code
 
 version 1.0
