@@ -19,7 +19,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import sys
+import os, sys
 import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
