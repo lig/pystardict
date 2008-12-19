@@ -149,39 +149,36 @@ class _StarDictIdx():
             raise Exception('size of the .idx file is incorrect')
         
         self._ifile = iter(self._file)
-        #@todo: make class for idx entry 
         self._idx = {}
-        entry = []
         word_str = ''
         c = 0
+        idx_offset_bytes_size = int(container.ifo.idxoffsetbits / 8)
+        idx_offset_format = {4: 'L', 8: 'Q',}[idx_offset_bytes_size]
+        idx_cords_bytes_size = idx_offset_bytes_size + 4
         for byte in self._ifile:
             
             # looping for word_str
             if byte == '\x00':
-                entry.append(''.join(unpack('%sc' % c, word_str)))
+                
+                # reading word_data_offset and word_data_size bytes
+                word_data_cords_bytes = ''.join([self._ifile.next() for i in
+                    range(idx_cords_bytes_size)])
+                
+                # unpacking record values
+                record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
+                    word_str + word_data_cords_bytes)
+                word, cords = ''.join(record_tuple[:c]), record_tuple[c:]
+                
+                # saving line
+                self._idx[word] = cords
+                
                 word_str = ''
                 c = 0
             else:
                 word_str += byte
                 c += 1
                 continue
-            
-            # reading word_data_offset
-            word_data_offset_bytes = ''.join(
-                [self._ifile.next() for i in range(
-                    int(container.ifo.idxoffsetbits / 8))])
-            word_data_offset = unpack('!L', word_data_offset_bytes)[0]
-            entry.append(word_data_offset)
-            
-            # reading word_data_size
-            word_data_size_bytes = ''.join(
-                [self._ifile.next() for i in range(4)])
-            word_data_size = unpack('!L', word_data_size_bytes)[0]
-            entry.append(word_data_size)
-            
-            # saving line
-            self._idx[entry[0]] = tuple(entry[1:])
-            entry = []
+                        
     
     def __getitem__(self, word):
         """
