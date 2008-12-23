@@ -21,10 +21,19 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 """
 import datetime
 import os
+import sys
 
-from pystardict import Dictionary
+"""hack in local sources if requested and handle import crash"""
+if 1 in sys.argv and sys.argv[1] == '--local':
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__, '..', 'src'))) 
+else:
+    try:
+        from pystardict import Dictionary
+    except ImportError:
+        print Exception('No pystardict in PYTHONPATH. Try --local parameter.')
+        exit(1)
 
-if __name__ == '__main__':
+def demo():
     
     milestone1 = datetime.datetime.today()
     
@@ -60,3 +69,7 @@ if __name__ == '__main__':
     
     milestone6 = datetime.datetime.today()
     print '2 high level data getters (cached):', milestone6-milestone5
+
+
+if __name__ == '__main__':
+    demo()
