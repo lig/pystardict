@@ -21,6 +21,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 """
 import gzip
 from struct import unpack
+from numpy import *
 
 class _StarDictIfo():
     """
@@ -164,13 +165,18 @@ class _StarDictIdx():
                 word_data_cords_bytes = ''.join([self._ifile.next() for i in
                     range(idx_cords_bytes_size)])
                 
+                # preparing record format
+                dt = dtype([
+                    ('word_str', 'S%s' % c,),
+                    ('word_data_offset', '>i%s' % idx_offset_bytes_size,),
+                    ('word_data_size', '>i4',),
+                ])
                 # unpacking record values
-                record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
-                    word_str + word_data_cords_bytes)
-                word, cords = ''.join(record_tuple[:c]), record_tuple[c:]
+                record_tuple = frombuffer(word_str + word_data_cords_bytes,
+                    dtype=dt)[0]
                 
                 # saving line
-                self._idx[word] = cords
+                self._idx[record_tuple[0]] = (record_tuple[1], record_tuple[2],)
                 
                 word_str = ''
                 c = 0
