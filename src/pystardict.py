@@ -162,7 +162,7 @@ class _StarDictIdx():
                 
                 # reading word_data_offset and word_data_size bytes
                 word_data_cords_bytes = ''.join([self._ifile.next() for i in
-                    range(idx_cords_bytes_size)])
+                    xrange(idx_cords_bytes_size)])
                 
                 # unpacking record values
                 record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
