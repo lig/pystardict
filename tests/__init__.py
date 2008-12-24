@@ -28,8 +28,8 @@ from pystardict import Dictionary
 class DictionaryTest(unittest.TestCase):
     
     def setUp(self):
-        self.dict = Dictionary(
-            'examples/stardict-quick_eng-rus-2.4.2/quick_english-russian')
+        self.dict = Dictionary(os.path.join(os.path.dirname(__file__), '..',
+            'examples', 'stardict-quick_eng-rus-2.4.2/quick_english-russian'))
     
     def test001Idx(self):
         self.assertEqual(self.dict.idx['test'], (581161, 16,))
