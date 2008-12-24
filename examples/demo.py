@@ -28,9 +28,12 @@ if '--local' in sys.argv:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src')) 
 try:
     from pystardict import Dictionary
-except ImportError:
-    print Exception('No pystardict in PYTHONPATH. Try --local parameter.')
-    exit(1)
+except ImportError, e:
+    if __name__ == '__main__':
+        print Exception('No pystardict in PYTHONPATH. Try --local parameter.')
+        exit(1)
+    else:
+        raise e
 
 def demo():
     
