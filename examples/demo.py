@@ -24,14 +24,13 @@ import os
 import sys
 
 """hack in local sources if requested and handle import crash"""
-if 1 in sys.argv and sys.argv[1] == '--local':
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__, '..', 'src'))) 
-else:
-    try:
-        from pystardict import Dictionary
-    except ImportError:
-        print Exception('No pystardict in PYTHONPATH. Try --local parameter.')
-        exit(1)
+if '--local' in sys.argv:
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src')) 
+try:
+    from pystardict import Dictionary
+except ImportError:
+    print Exception('No pystardict in PYTHONPATH. Try --local parameter.')
+    exit(1)
 
 def demo():
     
