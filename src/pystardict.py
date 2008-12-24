@@ -154,7 +154,6 @@ class _StarDictIdx():
         word_str = ''
         c = 0
         idx_offset_bytes_size = int(container.ifo.idxoffsetbits / 8)
-        idx_offset_format = {4: 'L', 8: 'Q',}[idx_offset_bytes_size]
         idx_cords_bytes_size = idx_offset_bytes_size + 4
         for byte in self._ifile:
             
