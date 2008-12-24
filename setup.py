@@ -29,7 +29,7 @@ setup(
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
     url='http://pystardict.nophp.ru/',
-    requires=['gzip', 'struct',],
+    requires=['gzip', 'struct', 'numpy',],
     py_modules=['pystardict',],
     package_dir={'': 'src',},
     data_files=[
