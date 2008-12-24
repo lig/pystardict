@@ -167,7 +167,7 @@ class _StarDictIdx():
                 # unpacking record values
                 record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
                     word_str + word_data_cords_bytes)
-                word, cords = ''.join(record_tuple[:c]), record_tuple[c:]
+                word, cords = record_tuple[:c], record_tuple[c:]
                 
                 # saving line
                 self._idx[word] = cords
@@ -186,7 +186,7 @@ class _StarDictIdx():
         
         @note: here may be placed flexible search realization
         """
-        return self._idx[word]
+        return self._idx[tuple(word)]
 
 class _StarDictDict():
     """
