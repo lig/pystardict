@@ -28,7 +28,7 @@ setup(
     description='Library for manipulating StarDict dictionaries from within Python',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
-    url='http://pystardict.nophp.ru/',
+    url='http://www.ohloh.net/p/pystardict',
     requires=['gzip', 'struct',],
     py_modules=['pystardict',],
     package_dir={'': 'src',},
