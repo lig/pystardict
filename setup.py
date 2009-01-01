@@ -35,6 +35,7 @@ setup(
     data_files=[
         ('share/pystardict', [
             'examples/demo.py',
+            'examples/profile_demo.py',
         ],),
         ('share/pystardict/stardict-quick_eng-rus-2.4.2', [
             'examples/demo.py',
