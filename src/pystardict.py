@@ -20,6 +20,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 @author: Serge Matveenko <s@matveenko.ru>
 """
 import gzip
+import re
 from struct import unpack
 
 class _StarDictIfo():
@@ -148,37 +149,19 @@ class _StarDictIdx():
         if file.tell() != container.ifo.idxfilesize:
             raise Exception('size of the .idx file is incorrect')
         
-        self._ifile = iter(self._file)
         self._idx = {}
-        word_str = ''
-        c = 0
         idx_offset_bytes_size = int(container.ifo.idxoffsetbits / 8)
         idx_offset_format = {4: 'L', 8: 'Q',}[idx_offset_bytes_size]
         idx_cords_bytes_size = idx_offset_bytes_size + 4
-        for byte in self._ifile:
-            
-            # looping for word_str
-            if byte == '\x00':
-                
-                # reading word_data_offset and word_data_size bytes
-                word_data_cords_bytes = ''.join([self._ifile.next() for i in
-                    xrange(idx_cords_bytes_size)])
-                
-                # unpacking record values
-                record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
-                    word_str + word_data_cords_bytes)
-                word, cords = record_tuple[:c], record_tuple[c:]
-                
-                # saving line
-                self._idx[word] = cords
-                
-                word_str = ''
-                c = 0
-            else:
-                word_str += byte
-                c += 1
-                continue
-                        
+        
+        record_pattern = r'([\d\D]+?\x00[\d\D]{%s})' % idx_cords_bytes_size
+        match_obj = re.findall(record_pattern, self._file)
+        
+        for e in match_obj:
+            c = e.find('\x00') + 1
+            record_tuple = unpack('!%sc%sL' % (c, idx_offset_format), e)
+            word, cords = record_tuple[:c-1], record_tuple[c:]
+            self._idx[word] = cords                        
     
     def __getitem__(self, word):
         """
