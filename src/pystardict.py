@@ -20,6 +20,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 @author: Serge Matveenko <s@matveenko.ru>
 """
 import gzip
+import md5
 import re
 from struct import unpack
 
@@ -83,7 +84,7 @@ class _StarDictIfo():
             _line_splited = _line.split('=')
             _config[_line_splited[0]] = _line_splited[1]
         
-        self.bookname = _config.get('bookname', None)
+        self.bookname = _config.get('bookname', None).strip()
         if self.bookname is None: raise Exception('ifo has no bookname')
         
         self.wordcount = _config.get('wordcount', None)
@@ -107,17 +108,17 @@ class _StarDictIfo():
         self.idxoffsetbits = _config.get('idxoffsetbits', 32)
         self.idxoffsetbits = int(self.idxoffsetbits)
         
-        self.author = _config.get('author', '')
+        self.author = _config.get('author', '').strip()
         
-        self.email = _config.get('email', '')
+        self.email = _config.get('email', '').strip()
         
-        self.website = _config.get('website', '')
+        self.website = _config.get('website', '').strip()
         
-        self.description = _config.get('description', '')
+        self.description = _config.get('description', '').strip()
         
-        self.date = _config.get('date', '')
+        self.date = _config.get('date', '').strip()
         
-        self.sametypesequence = _config.get('sametypesequence', '')
+        self.sametypesequence = _config.get('sametypesequence', '').strip()
 
 class _StarDictIdx():
     """
@@ -144,24 +145,32 @@ class _StarDictIdx():
             except IOError:
                 raise Exception('.idx file does not exists')
         
-        # check file size
+        """ check file size """
         self._file = file.read()
         if file.tell() != container.ifo.idxfilesize:
             raise Exception('size of the .idx file is incorrect')
         
+        """ prepare main dict and parsing parameters """
         self._idx = {}
         idx_offset_bytes_size = int(container.ifo.idxoffsetbits / 8)
         idx_offset_format = {4: 'L', 8: 'Q',}[idx_offset_bytes_size]
         idx_cords_bytes_size = idx_offset_bytes_size + 4
         
+        """ parse data via regex """
         record_pattern = r'([\d\D]+?\x00[\d\D]{%s})' % idx_cords_bytes_size
-        match_obj = re.findall(record_pattern, self._file)
+        matched_records = re.findall(record_pattern, self._file)
         
-        for e in match_obj:
-            c = e.find('\x00') + 1
-            record_tuple = unpack('!%sc%sL' % (c, idx_offset_format), e)
+        """ check records count """
+        if len(matched_records) != container.ifo.wordcount:
+            raise Exception('words count is incorrect')
+        
+        """ unpack parsed records """
+        for matched_record in matched_records:
+            c = matched_record.find('\x00') + 1
+            record_tuple = unpack('!%sc%sL' % (c, idx_offset_format),
+                matched_record)
             word, cords = record_tuple[:c-1], record_tuple[c:]
-            self._idx[word] = cords                        
+            self._idx[word] = cords        
     
     def __getitem__(self, word):
         """
@@ -170,6 +179,24 @@ class _StarDictIdx():
         @note: here may be placed flexible search realization
         """
         return self._idx[tuple(word)]
+    
+    def __contains__(self, k):
+        """
+        returns True if index has a word k, else False
+        """
+        return tuple(k) in self._idx
+    
+    def __eq__(self, y):
+        """
+        returns True if md5(x.idx) is equal to md5(y.idx), else False
+        """
+        return md5.new(self._file).digest() == md5.new(y._file).digest()
+    
+    def __ne__(self, y):
+        """
+        returns True if md5(x.idx) is not equal to md5(y.idx), else False
+        """
+        return not self.__eq__(y)
 
 class _StarDictDict():
     """
@@ -336,12 +363,9 @@ class _StarDictDict():
         # reading data
         bytes = self._file.read(cords[1])
         
-        #@todo: handle multifield data
-        #@todo: handle encoding. it seems to be working as is but i'm not sure 
         return bytes
 
 class _StarDictSyn():
-    #@todo: implement .syn special methods
     
     def __init__(self, dict_prefix, container):
         
@@ -377,8 +401,6 @@ class Dictionary(dict):
         
         initializes new StarDictDict instance from stardict dictionary files
         provided by filename_prefix
-        
-        @todo: option to init from path to folder not from prefix
         """
         
         # reading somedict.ifo
@@ -405,24 +427,20 @@ class Dictionary(dict):
     def __contains__(self, k):
         """
         returns True if x.idx has a word k, else False
-        
-        @todo: implement me
         """
-        pass
+        return k in self.idx
     
     def __delitem__(self, k):
         """
         frees cache from word k translation
-        
-        @todo: implement me
         """
-        pass
+        del self._dict_cache[k]
     
     def __eq__(self, y):
         """
-        raises NotImplemented exception
+        returns True if md5(x.idx) is equal to md5(y.idx), else False
         """
-        raise NotImplementedError()
+        return self.idx.__eq__(y.idx)
     
     def __ge__(self, y):
         """
@@ -462,10 +480,8 @@ class Dictionary(dict):
     def __len__(self):
         """
         returns number of words provided by wordcount parameter of the x.ifo
-        
-        @todo: implement me
         """
-        pass
+        return self.ifo.wordcount
     
     def __lt__(self):
         """
@@ -473,56 +489,43 @@ class Dictionary(dict):
         """
         raise NotImplementedError()
     
-    def __ne__(self):
+    def __ne__(self, y):
         """
         returns True if md5(x.idx) is not equal to md5(y.idx), else False
-        
-        @todo: implement me
         """
-        pass
+        return not self.__eq__(y)
     
     def __repr__(self):
         """
         returns classname and bookname parameter of the x.ifo
-        
-        @todo: implement me
         """
-        pass
+        return u'%s %s' % (self.__class__, self.ifo.bookname)
     
     def __setitem__(self, k, v):
         """
-        sets translation of the word k to v
-        
-        @todo: implement me
+        raises NotImplemented exception
         """
-        pass
+        raise NotImplementedError()
     
     def clear(self):
         """
-        unlike dict class resets dictionary to the original state, i.e. clears
-        all of the blacklisting info or reverts changed values 
-        
-        @todo: implement me
+        clear dict cache 
         """
-        pass
+        self._dict_cache = dict()
     
     def get(self, k, d=''):
         """
         returns translation of the word k from self.dict or d if k not in x.idx
         
         d defaults to empty string
-        
-        @todo: implement me
         """
-        pass
+        return k in self and self[k] or d
     
     def has_key(self, k):
         """
         returns True if self.idx has a word k, else False
-        
-        @todo: implement me
         """
-        pass
+        return k in self
     
     def items(self):
         """
@@ -556,13 +559,9 @@ class Dictionary(dict):
     
     def pop(self, k, d):
         """
-        Returns translation for the word k from self.dict and blacklists
-        specified word. If word is not in self.idx, d is returned if given,
-        otherwise KeyError is raised
-        
-        @todo: implement me
+        raises NotImplemented exception
         """
-        pass
+        raise NotImplementedError()
     
     def popitem(self):
         """

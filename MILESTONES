@@ -7,9 +7,20 @@ version 0.4
 * .idx file loading time optimization
 * No "todo"s in the code
 
+version 0.6
+-----------
+
+* To handle multifield data
+
+version 0.8
+-----------
+
+* To implement synonyms file (.syn) support
+
 version 1.0
 -----------
 
+* Option to init Dictionary from path to folder not from prefix
 * Flexible search
 
 version 2.0
