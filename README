@@ -21,7 +21,7 @@ PyStarDict README
 Home page
 ---------
 
-<https://sourceforge.net/projects/pystardict/>
+<http://www.ohloh.net/p/pystardict>
 
 Authors
 -------
@@ -39,7 +39,7 @@ _This is short installation instructions for PyStarDict._
 
 2. Download latest version of PyStarDict
 
-  [SourceForge Download Page]
+  <http://sourceforge.net/project/platformdownload.php?group_id=247655>
 
 3. Extract files from the archive
 
@@ -69,7 +69,7 @@ How to contribute
 
 * Fill free to report any bugs or attach patches here:
 
-  [File bug on the SorceForge BugTracker]
+  <https://sourceforge.net/tracker/?group_id=247655&atid=1126317>
 
 * Or send you patches by email:
 
