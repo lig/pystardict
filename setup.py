@@ -24,7 +24,7 @@ from distutils.core import setup
 
 setup(
     name='PyStarDict',
-    version='0.3',
+    version='0.5',
     description='Library for manipulating StarDict dictionaries from within Python',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
