@@ -24,7 +24,7 @@ import md5
 import re
 from struct import unpack
 
-class _StarDictIfo():
+class _StarDictIfo(object):
     """
     The .ifo file has the following format:
     
@@ -120,7 +120,7 @@ class _StarDictIfo():
         
         self.sametypesequence = _config.get('sametypesequence', '').strip()
 
-class _StarDictIdx():
+class _StarDictIdx(object):
     """
     The .idx file is just a word list.
     
@@ -195,7 +195,7 @@ class _StarDictIdx():
         """
         return not self.__eq__(y)
 
-class _StarDictDict():
+class _StarDictDict(object):
     """
     The .dict file is a pure data sequence, as the offset and size of each
     word is recorded in the corresponding .idx file.
@@ -359,7 +359,7 @@ class _StarDictDict():
         
         return bytes
 
-class _StarDictSyn():
+class _StarDictSyn(object):
     
     def __init__(self, dict_prefix, container):
         
