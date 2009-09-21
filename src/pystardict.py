@@ -138,12 +138,9 @@ class _StarDictIdx():
         idx_filename_gz = '%s.gz' % idx_filename
         
         try:
-            file = open(idx_filename, 'rb')
-        except IOError:
-            try:
-                file = gzip.open(idx_filename_gz, 'rb')
-            except IOError:
-                raise Exception('.idx file does not exists')
+            file = open_file(idx_filename, idx_filename_gz)
+        except:
+            raise Exception('.idx file does not exists')
         
         """ check file size """
         self._file = file.read()
@@ -342,12 +339,9 @@ class _StarDictDict():
         dict_filename_dz = '%s.dz' % dict_filename
         
         try:
-            self._file = open(dict_filename, 'rb')
-        except IOError:
-            try:
-                self._file = gzip.open(dict_filename_dz, 'rb')
-            except IOError:
-                raise Exception('.dict file does not exists')
+            self._file = open_file(dict_filename, dict_filename_dz)
+        except:
+            raise Exception('.dict file does not exists')
     
     def __getitem__(self, word):
         """
@@ -592,3 +586,16 @@ class Dictionary(dict):
         raises NotImplemented exception
         """
         raise NotImplementedError()
+
+def open_file(regular, gz):
+    """
+    Open regular file if it exists, gz file otherwise.
+    If no file exists, rise ValueError.
+    """
+    try:
+        return open(regular, 'rb')
+    except IOError:
+        try:
+            return gzip.open(gz, 'rb')
+        except IOError:
+            raise ValueError('Neither regular nor gz file exists')
