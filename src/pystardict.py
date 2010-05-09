@@ -20,7 +20,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 @author: Serge Matveenko <s@matveenko.ru>
 """
 import gzip
-import md5
+import hashlib
 import re
 from struct import unpack
 
@@ -185,13 +185,13 @@ class _StarDictIdx(object):
     
     def __eq__(self, y):
         """
-        returns True if md5(x.idx) is equal to md5(y.idx), else False
+        returns True if hashlib.md5(x.idx) is equal to hashlib.md5(y.idx), else False
         """
-        return md5.new(self._file).digest() == md5.new(y._file).digest()
+        return hashlib.md5(self._file).hexdigest() == hashlib.md5(y._file).hexdigest()
     
     def __ne__(self, y):
         """
-        returns True if md5(x.idx) is not equal to md5(y.idx), else False
+        returns True if hashlib.md5(x.idx) is not equal to hashlib.md5(y.idx), else False
         """
         return not self.__eq__(y)
 
@@ -432,7 +432,7 @@ class Dictionary(dict):
     
     def __eq__(self, y):
         """
-        returns True if md5(x.idx) is equal to md5(y.idx), else False
+        returns True if hashlib.md5(x.idx) is equal to hashlib.md5(y.idx), else False
         """
         return self.idx.__eq__(y.idx)
     
@@ -485,7 +485,7 @@ class Dictionary(dict):
     
     def __ne__(self, y):
         """
-        returns True if md5(x.idx) is not equal to md5(y.idx), else False
+        returns True if hashlib.md5(x.idx) is not equal to hashlib.md5(y.idx), else False
         """
         return not self.__eq__(y)
     
