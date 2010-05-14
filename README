@@ -1,4 +1,4 @@
-Copyright 2008 Serge Matveenko
+Copyright 2008-2010 Serge Matveenko
 
 This file is part of PyStarDict.
 
@@ -26,7 +26,8 @@ Home page
 Authors
 -------
 
-Serge Matveenko <s@matveenko.ru>
+Serge Matveenko <s@matveenko.ru>, Maksim Zakharov <python.candidate@gmail.com>,
+Yura Tolstik <yltsrc@gmail.com>
 
 Installation
 ------------
