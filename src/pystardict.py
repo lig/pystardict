@@ -22,6 +22,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 import gzip
 import hashlib
 import re
+import warnings
 from struct import unpack
 
 class _StarDictIfo(object):
@@ -134,7 +135,8 @@ class _StarDictIdx(object):
     """
     
     def __init__(self, dict_prefix, container):
-        
+        self._container = container
+
         idx_filename = '%s.idx' % dict_prefix
         idx_filename_gz = '%s.gz' % idx_filename
         
@@ -196,6 +198,22 @@ class _StarDictIdx(object):
         returns True if hashlib.md5(x.idx) is not equal to hashlib.md5(y.idx), else False
         """
         return not self.__eq__(y)
+
+    def iterkeys(self):
+        """
+        returns iterkeys
+        """
+        if not self._container.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        return self._idx.iterkeys()
+
+    def keys(self):
+        """
+        returns keys
+        """
+        if not self._container.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        return self._idx.keys()
 
 class _StarDictDict(object):
     """
@@ -362,7 +380,7 @@ class _StarDictDict(object):
         returns data from .dict for word
         """
         
-        # getting word data coordinats
+        # getting word data coordinates
         cords = self._container.idx[word]
 
         if self._in_memory:
@@ -413,6 +431,8 @@ class Dictionary(dict):
         initializes new StarDictDict instance from stardict dictionary files
         provided by filename_prefix
         """
+
+        self.in_memory = in_memory
         
         # reading somedict.ifo
         self.ifo = _StarDictIfo(dict_prefix=filename_prefix, container=self)
@@ -540,21 +560,28 @@ class Dictionary(dict):
     
     def items(self):
         """
-        raises NotImplemented exception
+        returns items
         """
-        raise NotImplementedError()
+        if not self.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        return [(key, self[key]) for key in self.iterkeys()]
     
     def iteritems(self):
         """
-        raises NotImplemented exception
+        returns iteritems
         """
-        raise NotImplementedError()
+        if not self.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        for key in self.iterkeys():
+            yield (key, self[key])
     
     def iterkeys(self):
         """
-        raises NotImplemented exception
+        returns iterkeys
         """
-        raise NotImplementedError()
+        if not self.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        return self.idx.iterkeys()
     
     def itervalues(self):
         """
@@ -564,9 +591,11 @@ class Dictionary(dict):
     
     def keys(self):
         """
-        raises NotImplemented exception
+        returns keys
         """
-        raise NotImplementedError()
+        if not self.in_memory:
+            warnings.warn('Iter dict items with in_memory=False may cause serious performance problem')
+        return self.idx.keys()
     
     def pop(self, k, d):
         """

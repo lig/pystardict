@@ -80,4 +80,8 @@ class DictionaryTest(unittest.TestCase):
     def test012InMemoryDict(self):
         self.assertEqual(self.in_memory_dict['test'], 'проверка')
 
+    def test013IterateDict(self):
+        for k, v in self.in_memory_dict.items():
+            self.assertEqual(self.in_memory_dict[k], v)
+
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(DictionaryTest)
