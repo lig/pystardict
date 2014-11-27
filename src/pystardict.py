@@ -83,6 +83,7 @@ class _StarDictIfo(object):
         for _line in _file:
             _line_splited = _line.split('=')
             _config[_line_splited[0]] = _line_splited[1]
+        _file.close()
         
         self.bookname = _config.get('bookname', None).strip()
         if self.bookname is None: raise Exception('ifo has no bookname')
@@ -93,7 +94,7 @@ class _StarDictIfo(object):
         
         if self.version == '3.0.0':
             try:
-                _syn = open('%s.syn' % dict_prefix)
+                #_syn = open('%s.syn' % dict_prefix)    # not used
                 self.synwordcount = _config.get('synwordcount', None)
                 if self.synwordcount is None:
                     raise Exception('ifo has no synwordcount but .syn file exists')
@@ -146,6 +147,7 @@ class _StarDictIdx(object):
         self._file = file.read()
         if file.tell() != container.ifo.idxfilesize:
             raise Exception('size of the .idx file is incorrect')
+        file.close()
         
         """ prepare main dict and parsing parameters """
         self._idx = {}
@@ -327,21 +329,33 @@ class _StarDictDict(object):
     
     'X'
     this type identifier is reserved for experimental extensions.
+
     """
     
-    def __init__(self, dict_prefix, container):
+    def __init__(self, dict_prefix, container, in_memory=False):
         """
-        opens regular or dziped .dict file 
+        opens regular or dziped .dict file
+
+        'in_memory': indicate whether read whole dict file into memory
         """
         self._container = container
+        self._in_memory = in_memory
         
         dict_filename = '%s.dict' % dict_prefix
         dict_filename_dz = '%s.dz' % dict_filename
-        
-        try:
-            self._file = open_file(dict_filename, dict_filename_dz)
-        except:
-            raise Exception('.dict file does not exists')
+
+        if in_memory:
+            try:
+                f = open_file(dict_filename, dict_filename_dz)
+                self._file = f.read()
+                f.close()
+            except:
+                raise Exception('.dict file does not exists')
+        else:
+            try:
+                self._file = open_file(dict_filename, dict_filename_dz)
+            except:
+                raise Exception('.dict file does not exists')
     
     def __getitem__(self, word):
         """
@@ -350,12 +364,15 @@ class _StarDictDict(object):
         
         # getting word data coordinats
         cords = self._container.idx[word]
-        
-        # seeking in file for data
-        self._file.seek(cords[0])
-        
-        # reading data
-        bytes = self._file.read(cords[1])
+
+        if self._in_memory:
+            bytes = self._file[cords[0]: cords[0]+cords[1]]
+        else:
+            # seeking in file for data
+            self._file.seek(cords[0])
+
+            # reading data
+            bytes = self._file.read(cords[1])
         
         return bytes
 
@@ -389,7 +406,7 @@ class Dictionary(dict):
     
     """
     
-    def __init__(self, filename_prefix):
+    def __init__(self, filename_prefix, in_memory=False):
         """
         filename_prefix: path to dictionary files without files extensions
         
@@ -404,7 +421,7 @@ class Dictionary(dict):
         self.idx = _StarDictIdx(dict_prefix=filename_prefix, container=self)
         
         # reading somedict.dict or somedict.dict.dz
-        self.dict = _StarDictDict(dict_prefix=filename_prefix, container=self)
+        self.dict = _StarDictDict(dict_prefix=filename_prefix, container=self, in_memory=in_memory)
         
         # reading somedict.syn (optional)
         self.syn = _StarDictSyn(dict_prefix=filename_prefix, container=self)

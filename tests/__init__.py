@@ -30,6 +30,8 @@ class DictionaryTest(unittest.TestCase):
     def setUp(self):
         self.dict = Dictionary(os.path.join(os.path.dirname(__file__), '..',
             'examples', 'stardict-quick_eng-rus-2.4.2/quick_english-russian'))
+        self.in_memory_dict = Dictionary(os.path.join(os.path.dirname(__file__), '..',
+            'examples', 'stardict-quick_eng-rus-2.4.2/quick_english-russian'), in_memory=True)
     
     def test001Idx(self):
         self.assertEqual(self.dict.idx['test'], (581161, 16,))
@@ -74,5 +76,8 @@ class DictionaryTest(unittest.TestCase):
     def test011Get(self):
         self.assertEqual(self.dict.get('test', 't'), 'проверка')
         self.assertEqual(self.dict.get('testtt', 't'), 't')
+
+    def test012InMemoryDict(self):
+        self.assertEqual(self.in_memory_dict['test'], 'проверка')
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(DictionaryTest)
