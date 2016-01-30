@@ -18,20 +18,18 @@ You should have received a copy of the GNU General Public License
 along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+from setuptools import setup
 
-import os
-from distutils.core import setup
 
 setup(
     name='PyStarDict',
-    version='0.5',
+    version='0.6',
     description='Library for manipulating StarDict dictionaries from within Python',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
     url='http://www.ohloh.net/p/pystardict',
-    requires=['gzip', 'struct',],
-    py_modules=['pystardict',],
-    package_dir={'': 'src',},
+    requires=['gzip', 'struct'],
+    py_modules=['pystardict'],
     data_files=[
         ('share/pystardict', [
             'examples/demo.py',
