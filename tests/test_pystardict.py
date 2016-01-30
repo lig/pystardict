@@ -36,11 +36,11 @@ def test001Idx(fixture_dict):
 
 
 def test002Dict(fixture_dict):
-    assert fixture_dict.dict['test'] == 'проверка'
+    assert fixture_dict.dict['test'] == u'проверка'
 
 
 def test003Dictionary(fixture_dict):
-    assert fixture_dict['test'] == 'проверка'
+    assert fixture_dict['test'] == u'проверка'
 
 
 def test004Contains(fixture_dict):
@@ -92,7 +92,7 @@ def test010Clear(fixture_dict):
 
 
 def test011Get(fixture_dict):
-    assert fixture_dict.get('test', 't') == 'проверка'
+    assert fixture_dict.get('test', 't') == u'проверка'
     assert fixture_dict.get('testtt', 't') == 't'
 
 

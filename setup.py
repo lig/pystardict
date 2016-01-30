@@ -23,12 +23,12 @@ from setuptools import setup
 
 setup(
     name='PyStarDict',
-    version='0.6.1',
+    version='0.7',
     description='Library for manipulating StarDict dictionaries from within Python',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
     url='http://www.ohloh.net/p/pystardict',
-    requires=['gzip', 'struct'],
+    install_requires=['six'],
     py_modules=['pystardict'],
     data_files=[
         ('share/pystardict', [
