@@ -23,7 +23,7 @@ from setuptools import setup
 
 setup(
     name='PyStarDict',
-    version='0.6',
+    version='0.6.1',
     description='Library for manipulating StarDict dictionaries from within Python',
     author='Serge Matveenko',
     author_email='s@matveenko.ru',
