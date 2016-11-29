@@ -158,6 +158,7 @@ class _StarDictIdx(object):
         """ unpack parsed records """
         for matched_record in matched_records:
             c = matched_record.find(b'\x00') + 1
+            if c == 1: continue #Empty record
             record_tuple = unpack(
                 '!%sc%sL' % (c, idx_offset_format), matched_record)
             word, cords = record_tuple[:c - 1], record_tuple[c:]
