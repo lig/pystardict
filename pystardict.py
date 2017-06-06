@@ -1,5 +1,4 @@
 from struct import unpack
-from warnings import warn
 import gzip
 import hashlib
 import re
@@ -50,7 +49,7 @@ class _StarDictIfo(object):
         ifo_filename = '%s.ifo' % dict_prefix
 
         try:
-            _file = open(ifo_filename)
+            _file = open(ifo_filename,encoding='UTF-8')
         except IOError:
             raise Exception('.ifo file does not exists')
 
@@ -131,7 +130,7 @@ class _StarDictIdx(object):
         try:
             file = open_file(idx_filename, idx_filename_gz)
         except Exception as e:
-            warn(e.message)
+            print("Error {0}".format(str(e.args[0])).encode("utf-8"))
             raise Exception('.idx file does not exists')
 
         self._file = file.read()
@@ -399,7 +398,7 @@ class _StarDictSyn(object):
         syn_filename = '%s.syn' % dict_prefix
 
         try:
-            self._file = open(syn_filename)
+            self._file = open(syn_filename,encoding='UTF-8')
         except IOError:
             # syn file is optional, passing silently
             pass
@@ -646,9 +645,9 @@ def open_file(regular, gz):
     try:
         return open(regular, 'rb')
     except IOError as e:
-        warn(e.message)
+        print("Error {0}".format(str(e.args[0])).encode("utf-8"))
         try:
             return gzip.open(gz, 'rb')
         except IOError:
-            warn(e.message)
+            print("Error {0}".format(str(e.args[0])).encode("utf-8"))
             raise ValueError('Neither regular nor gz file exists')
