@@ -413,8 +413,8 @@ class Dictionary(dict):
     but changes are not stored anywhere and available in runtime only.
 
     We assume in this documentation that "x" or "y" is instances of the
-    StarDictDict class and "x.{ifo,idx{,.gz},dict{,.dz),syn}" or
-    "y.{ifo,idx{,.gz},dict{,.dz),syn}" is files of the corresponding stardict
+    StarDictDict class and "x.{ifo,idx{,.gz},dict{,.dz},syn}" or
+    "y.{ifo,idx{,.gz},dict{,.dz},syn}" is files of the corresponding stardict
     dictionaries.
 
 
