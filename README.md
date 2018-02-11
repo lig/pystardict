@@ -1,4 +1,4 @@
-pystardict
+pystardict [![Build Status](https://travis-ci.org/lig/pystardict.svg?branch=master)](https://travis-ci.org/lig/pystardict)
 ==========
 
 Home page
