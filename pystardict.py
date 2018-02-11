@@ -1,9 +1,10 @@
-from struct import unpack
-from warnings import warn
 import gzip
 import hashlib
 import re
 import warnings
+from struct import unpack
+from warnings import warn
+
 import six
 
 
@@ -157,10 +158,12 @@ class _StarDictIdx(object):
 
         """ unpack parsed records """
         for matched_record in matched_records:
-            c = matched_record.find(b'\x00') + 1
+            c = matched_record.find(b'\x00')
+            if c == 0:
+                continue
             record_tuple = unpack(
-                '!%sc%sL' % (c, idx_offset_format), matched_record)
-            word, cords = record_tuple[:c - 1], record_tuple[c:]
+                '!%sc%sL' % (c + 1, idx_offset_format), matched_record)
+            word, cords = record_tuple[:c], record_tuple[c + 1:]
             self._idx[b''.join(word)] = cords
 
     def __getitem__(self, word):
