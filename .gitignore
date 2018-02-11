@@ -6,4 +6,5 @@
 *.pyc
 
 # dev
+/venv
 /*.egg-info
