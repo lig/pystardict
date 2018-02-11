@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
+
 import pytest
 
 from pystardict import Dictionary
 
 
-@pytest.fixture(params=['on_disk', 'in_memory'])
+@pytest.fixture(params=['on_disk', 'in_memory'], scope="session")
 def fixture_dict(request):
     return {
         'on_disk': Dictionary(
@@ -28,7 +29,7 @@ def fixture_dict(request):
 
 @pytest.fixture
 def fixture_in_memory_dict():
-    return 
+    return
 
 
 def test001Idx(fixture_dict):

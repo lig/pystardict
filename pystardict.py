@@ -1,9 +1,9 @@
 import gzip
 import hashlib
+import os
 import re
 import warnings
 from struct import unpack
-from warnings import warn
 
 import six
 
@@ -52,8 +52,8 @@ class _StarDictIfo(object):
 
         try:
             _file = open(ifo_filename)
-        except IOError:
-            raise Exception('.ifo file does not exists')
+        except Exception as e:
+            raise Exception('ifo file opening error: "{}"'.format(e))
 
         _file.readline()
 
@@ -132,8 +132,7 @@ class _StarDictIdx(object):
         try:
             file = open_file(idx_filename, idx_filename_gz)
         except Exception as e:
-            warn(e.message)
-            raise Exception('.idx file does not exists')
+            raise Exception('idx file opening error: "{}"'.format(e))
 
         self._file = file.read()
 
@@ -149,7 +148,8 @@ class _StarDictIdx(object):
         idx_cords_bytes_size = idx_offset_bytes_size + 4
 
         """ parse data via regex """
-        record_pattern = br'([\d\D]+?\x00[\d\D]{'+str(idx_cords_bytes_size).encode('utf-8')+br'})'
+        record_pattern = br'([\d\D]+?\x00[\d\D]{' + str(
+            idx_cords_bytes_size).encode('utf-8') + br'})'
         matched_records = re.findall(record_pattern, self._file)
 
         """ check records count """
@@ -362,18 +362,16 @@ class _StarDictDict(object):
         dict_filename = '%s.dict' % dict_prefix
         dict_filename_dz = '%s.dz' % dict_filename
 
+        try:
+            f = open_file(dict_filename, dict_filename_dz)
+        except Exception as e:
+            raise Exception('dict file opening error: "{}"'.format(e))
+
         if in_memory:
-            try:
-                f = open_file(dict_filename, dict_filename_dz)
-                self._file = f.read()
-                f.close()
-            except:
-                raise Exception('.dict file does not exists')
+            self._file = f.read()
+            f.close()
         else:
-            try:
-                self._file = open_file(dict_filename, dict_filename_dz)
-            except:
-                raise Exception('.dict file does not exists')
+            self._file = f
 
     def __getitem__(self, word):
         """
@@ -646,12 +644,16 @@ def open_file(regular, gz):
     Open regular file if it exists, gz file otherwise.
     If no file exists, raise ValueError.
     """
-    try:
-        return open(regular, 'rb')
-    except IOError as e:
-        warn(e.message)
+    if os.path.exists(regular):
+        try:
+            return open(regular, 'rb')
+        except Exception as e:
+            raise Exception('regular file opening error: "{}"'.format(e))
+
+    if os.path.exists(gz):
         try:
             return gzip.open(gz, 'rb')
-        except IOError:
-            warn(e.message)
-            raise ValueError('Neither regular nor gz file exists')
+        except Exception as e:
+            raise Exception('gz file opening error: "{}"'.format(e))
+
+    raise ValueError('Neither regular nor gz file exists')
