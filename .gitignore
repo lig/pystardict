@@ -8,3 +8,6 @@
 # dev
 /venv
 /*.egg-info
+
+# ci
+!/.travis.yml
