@@ -1,4 +1,9 @@
 .*
 !.gitignore
 *~
+
+# python
 *.pyc
+
+# dev
+/*.egg-info
