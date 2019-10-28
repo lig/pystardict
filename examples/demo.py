@@ -72,6 +72,10 @@ def demo():
     milestone6 = datetime.datetime.today()
     print '2 high level data getters (cached):', milestone6-milestone5
 
+    # list dictionary keys and dictionary content according to the key
+    for key in dict1.ids.keys():
+	print dict1.dict[key]
+
 
 if __name__ == '__main__':
     demo()
