@@ -1,0 +1,17 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+[tool.poetry]
+
+name = "pystardict"
+version = "0.9.0-dev"
+description = "Library for manipulating StarDict dictionaries from within Python"
+authors = ["Serge Matveenko <lig@countzero.co>"]
+license = "GPL-3.0-or-later"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+tox = "^3.24.4"
+tox-poetry = "^0.4.1"
