@@ -33,7 +33,7 @@ def fixture_in_memory_dict():
 
 
 def test001Idx(fixture_dict):
-    assert fixture_dict.idx['test'] == (581161, 16,)
+    assert fixture_dict.idx['test'] == [(581161, 16,)]
 
 
 def test002Dict(fixture_dict):
