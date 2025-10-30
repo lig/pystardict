@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling",
+"hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pystardict"
+dynamic = ["version"]
+description = "Library for manipulating StarDict dictionaries from within Python"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+authors = [
+    { name = "Serge Matveenko", email = "s@matveenko.ru" },
+]
+dependencies = [
+    "six",
+]
+
+[project.urls]
+Homepage = "https://github.com/lig/pystardict"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel.shared-data]
+"examples/demo.py" = "share/pystardict/stardict-quick_eng-rus-2.4.2/demo.py"
+"examples/profile_demo.py" = "share/pystardict/profile_demo.py"
+"examples/stardict-quick_eng-rus-2.4.2" = "share/pystardict/stardict-quick_eng-rus-2.4.2"
+"examples/stardict-quick_rus-eng-2.4.2" = "share/pystardict/stardict-quick_rus-eng-2.4.2"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/pystardict",
+]
