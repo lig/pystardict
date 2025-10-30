@@ -1,3 +1,4 @@
+from collections import defaultdict
 import gzip
 import hashlib
 import os
@@ -140,7 +141,7 @@ class _StarDictIdx(object):
         file.close()
 
         """ prepare main dict and parsing parameters """
-        self._idx = {}
+        self._idx = defaultdict(list)
         idx_offset_bytes_size = int(container.ifo.idxoffsetbits / 8)
         idx_offset_format = {4: 'L', 8: 'Q', }[idx_offset_bytes_size]
         idx_cords_bytes_size = idx_offset_bytes_size + 4
@@ -162,7 +163,7 @@ class _StarDictIdx(object):
             record_tuple = unpack(
                 '!%sc%sL' % (c + 1, idx_offset_format), matched_record)
             word, cords = record_tuple[:c], record_tuple[c + 1:]
-            self._idx[b''.join(word)] = cords
+            self._idx[b''.join(word)].append(cords)
 
     def __getitem__(self, word):
         """
@@ -368,13 +369,16 @@ class _StarDictDict(object):
         cords = self._container.idx[word]
 
         if self._in_memory:
-            bytes_ = self._file[cords[0]: cords[0] + cords[1]]
+            bytes_ = b'\n\n'.join([self._file[c[0]: c[0] + c[1]]
+                                   for c in cords])
         else:
             # seeking in file for data
-            self._file.seek(cords[0])
+            def _read(cord):
+                self._file.seek(cord[0])
+                return self._file.read(cord[1])
 
             # reading data
-            bytes_ = self._file.read(cords[1])
+            bytes_ = b'\n\n'.join([_read(c) for c in cords])
 
         return bytes_.decode('utf-8')
 
